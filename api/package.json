@@ -1,0 +1,14 @@
+{
+  "name": "acme-clients-api",
+  "version": "1.0.0",
+  "description": "API REST CRUD pour la gestion des clients ACME",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.6.0",
+    "cors": "^2.8.5"
+  }
+}
