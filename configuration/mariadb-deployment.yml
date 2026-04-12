@@ -1,0 +1,36 @@
+# Deployment Info
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb-deployment
+spec: # Deployment Characteristics
+  replicas: 4
+  selector:
+    matchLabels:
+      app: mariadb
+  template: # Pod Template and Characteristics
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      containers: # Container Characteristics
+      - name: acme_database
+        image: mariadb:11.8
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MARIADB_ALLOW_EMPTY_ROOT_PASSWORD
+          value: "0"
+        - name: MARIADB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-password
+              key: MARIADB_ROOT_PASSWORD
+        - name: DB_USER
+          value: acme_user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: acme-dbpassword
+              key: DB_PASSWORD
+

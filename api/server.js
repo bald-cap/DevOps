@@ -1,14 +1,3 @@
-/**
- * API REST CRUD - Gestion des Clients ACME
- * 
- * Endpoints disponibles:
- * GET    /api/clients      - Liste tous les clients
- * GET    /api/clients/:id  - Récupère un client par son ID
- * POST   /api/clients      - Crée un nouveau client
- * PUT    /api/clients/:id  - Met à jour un client existant
- * DELETE /api/clients/:id  - Supprime un client
- */
-
 const express = require('express');
 const mysql = require('mysql2/promise');
 const cors = require('cors');
@@ -20,8 +9,6 @@ const PORT = 3000;
 app.use(express.json());
 app.use(cors());
 
-// Configuration de la connexion à MariaDB
-// Les variables d'environnement sont définies dans docker-compose.yml
 const dbConfig = {
     host: process.env.DB_HOST || 'mariadb',      // Nom du service Docker
     user: process.env.DB_USER || 'acme_user',
@@ -37,9 +24,9 @@ let pool;
 async function initDatabase() {
     try {
         pool = mysql.createPool(dbConfig);
-        console.log('✅ Connexion à MariaDB établie');
+        console.log('Connexion à MariaDB établie');
     } catch (error) {
-        console.error('❌ Erreur de connexion à la base:', error);
+        console.error('Erreur de connexion à la base:', error);
         process.exit(1);
     }
 }

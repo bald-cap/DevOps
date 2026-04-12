@@ -1,6 +1,6 @@
--- ===========================================
--- Script d'initialisation de la base clients
--- ===========================================
+GRANT ALL PRIVILEGES ON *.* TO 'acme_user'@'%';
+FLUSH PRIVILEGES;
+
 
 -- Création de la table clients
 CREATE TABLE IF NOT EXISTS clients (
