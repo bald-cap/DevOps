@@ -1,5 +1,4 @@
-# Deployment Info
-apiVersion: apps/v1
+apiVersion: apps/v1 # Deployment Info
 kind: Deployment
 metadata:
   name: mariadb-deployment
@@ -24,13 +23,28 @@ spec: # Deployment Characteristics
         - name: MARIADB_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mariadb-password
+              name: db-user-env-variables
               key: MARIADB_ROOT_PASSWORD
-        - name: DB_USER
-          value: acme_user
-        - name: DB_PASSWORD
+        - name: MARIADB_USER
           valueFrom:
             secretKeyRef:
-              name: acme-dbpassword
+              name: db-user-env-variables
+              key: DB_USER
+        - name: MARIADB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-user-env-variables
               key: DB_PASSWORD
-
+---
+apiVersion: apps/v1 # Service Info
+kind: Service
+metadata:
+  name: mariadb-service
+spec:
+  type: NodePort # Have no clue what this is
+  selector:
+    app: mariadb
+  ports:
+    - protocol: TCP
+      port : 3306
+      targetPort: 3306

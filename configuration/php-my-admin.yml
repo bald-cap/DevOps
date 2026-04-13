@@ -1,0 +1,49 @@
+apiVersion: apps/v1 # PHPMyAdmin Deployment
+kind: Deployment
+metadata:
+  name: phpmyadmin-deployment
+  labels:
+    app: db-interface
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: db-interface
+  template:
+    metadata:
+      labels:
+        app: db-interface
+    spec:
+      containers:
+        - name: phpmyadmin
+          image: phpmyadmin:5.2
+          ports:
+            - containerPort: 80
+          env:
+          - name: PMA_HOST
+            value: mariadb-service # No IP Address Needed, directly references the MariaDB Service
+          - name: PMA_PORT
+            value: "3306"
+          - name: PMA_USER
+          - valueFrom:
+            secretKeyRef:
+              name: db-user-env-variables
+              value: DB_USER
+          - name: PMA_PASSWORD
+          - valueFrom:
+            secretKeyRef:
+              name: db-user-env-variables
+              key: DB_PASSWORD
+---
+apiVersion: v1 # PHPMyAdmin Service
+kind: Service
+metadata:
+  labels: pma-service
+spec:
+  selector:
+    app: db-interface
+  ports:
+  - protocol: TCP
+    nodePort: 31008
+    port: 8080 # The Port We interact With
+    targetPort: 80
