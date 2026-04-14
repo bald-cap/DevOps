@@ -40,10 +40,11 @@ kind: Service
 metadata:
   labels: pma-service
 spec:
+  type: NodePort
   selector:
     app: db-interface
   ports:
   - protocol: TCP
-    nodePort: 31008
-    port: 8080 # The Port We interact With
+    nodePort: 8080  # The Port We interact With
+    port: 80
     targetPort: 80
