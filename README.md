@@ -13,3 +13,4 @@ Must Add Persistence/Volumes to MariaDB Container
 # HOW TO RUN
 Apply Secret YAML Files before Deploying
 
+Be sure to use `yamllint <file/to/path>` to inspect the yaml file indentations

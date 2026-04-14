@@ -13,7 +13,7 @@ spec: # Deployment Characteristics
         app: mariadb
     spec:
       containers: # Container Characteristics
-      - name: acme_database
+      - name: acme-database
         image: mariadb:11.8
         ports:
         - containerPort: 3306
@@ -36,7 +36,7 @@ spec: # Deployment Characteristics
               name: db-user-env-variables
               key: DB_PASSWORD
 ---
-apiVersion: apps/v1 # Service Info
+apiVersion: v1 # Service Info
 kind: Service
 metadata:
   name: mariadb-service
@@ -47,5 +47,4 @@ spec:
   ports:
     - protocol: TCP
       port : 3306
-      targetPort: 3306
-      nodePort: 3306
+      targetPort: 3306 # will retrieve nodePort dynamically

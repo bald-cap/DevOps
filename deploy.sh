@@ -1,31 +1,35 @@
-#!usr/bin/env sh
+#!/usr/bin/env bash
 
+set -x
 . .env
 
 # Logging in to Docker
 docker login --username "$DOCKERHUB_USERNAME" --password "$DOCKERHUB_PASSWORD"
 
 function IsReady(){
-    local -r podname="$1"
-    kubectl wait \
-        --for='jsonpath={.status.phase}'=Running \
-        pod/"$podname"
+    local -r service="$1"
+    pod_names=$(kubectl get pods --selector="app=$service" --output='jsonpath={.items[*].metadata.name}') && \
+    read -ra pods <<< "$pod_names" # Casting to Array
+
+    for pod in "$pods"; do
+        kubectl wait \
+            --for='jsonpath={.status.phase}'=Running \
+            pod/"$pod" ;
+    done
 }
 
 function TestService() {
     local -r service="$1"
     local -r deployment="$2"
-    local -r port=$(kubectl get services/"$service" --output='go-template={{(index .spec.ports 0).nodePort}}') # Complete
+    local -r port=$(kubectl get services/"$service" --output='go-template={{(index .spec.ports 0).port}}') # Complete
 
-    kubectl port-forward service/"$service" "$port":8080 &
+#    kubectl port-forward service/"$service" 8080:"$port" &
+    nc -zv 127.0.0.1 "$port"
 
-    curl --silent --insecure https://127.0.0.1:8080
-
-    if [ $? -ne 0 ]; then
-        echo "Issue Registering Secrets"
-        return 1
-    else
-        return 0
+    ErrorStatus=$?
+    if [ $ErrorStatus -ne 0 ]; then
+        echo "Service in Active";
+        exit 6;
     fi
 }
 
@@ -43,7 +47,7 @@ kubectl apply --filename configuration/mariadb.yml &&
     IsReady mariadb
 
 # TODO:  Expose Service and curl --silent the Service to see what it returns
-TestService  mariadb-service mariadb-deployment
+TestService mariadb-service mariadb-deployment
 
 if [ $? -ne 0 ]; then
     echo "Issue Deploying MariaDB"
@@ -51,11 +55,11 @@ if [ $? -ne 0 ]; then
 fi
 
 # Deploying DB interface (PHPMyAdmin) and Opening its service
-kubectl apply --filename php-my-admin.yml &&
+kubectl apply --filename configuration/php-my-admin.yml &&
     IsReady db-interface
 
 # TODO:  Expose Service and curl --silent the Service to see what it returns
-TestService  phpmyadmin-service phpmyadmin-deployment
+TestService pma-service phpmyadmin-deployment
 
 if [ $? -ne 0 ]; then
     echo "Issue Deploying Database Interface (PHPMyAdmin)"
