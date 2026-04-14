@@ -28,8 +28,9 @@ function TestService() {
         return 0
     fi
 }
+
 # Adding Secrets
-kubectl apply --filename .secret.yml &&
+kubectl apply --filename configuration/.secret.yml &&
     kubectl get secret db-user-env-variables > /dev/null 2>&1
 
 if [ $? -ne 0 ]; then
@@ -38,7 +39,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Deploying mariadb and Opening its Service
-kubectl apply --filename mariadb.yml &&
+kubectl apply --filename configuration/mariadb.yml &&
     IsReady mariadb
 
 # TODO:  Expose Service and curl --silent the Service to see what it returns
