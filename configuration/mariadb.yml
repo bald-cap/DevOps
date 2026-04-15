@@ -1,18 +1,18 @@
-apiVersion: apps/v1 # Deployment Info
+apiVersion: apps/v1  # Deployment Info
 kind: Deployment
 metadata:
   name: mariadb-deployment
-spec: # Deployment Characteristics
-  replicas: 4
+spec:  # Deployment Characteristics
+  replicas: 1  # Hence Stateless 
   selector:
     matchLabels:
       app: mariadb
-  template: # Pod Template and Characteristics
+  template:  # Pod Template and Characteristics
     metadata:
       labels:
         app: mariadb
     spec:
-      containers: # Container Characteristics
+      containers:  # Container Characteristics
       - name: acme-database
         image: mariadb:11.8
         ports:
@@ -35,16 +35,33 @@ spec: # Deployment Characteristics
             secretKeyRef:
               name: db-user-env-variables
               key: DB_PASSWORD
+        - name: MARIADB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: db-user-env-variables
+              key: DB_NAME
+        volumeMounts:  # Then Later to the Container
+        - name: mariadb-volume
+          mountPath: /var/lib/mysql
+        - name: db-init
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:  # Mounted to the Pod
+      - name: mariadb-volume
+        persistentVolumeClaim:
+          claimName: db-volume-claim
+      - name: db-init
+        configMap:
+          name: db-init-script  # Init scrip to run
 ---
-apiVersion: v1 # Service Info
+apiVersion: v1  # Service Info
 kind: Service
 metadata:
   name: mariadb-service
 spec:
-  type: NodePort # Have no clue what this is ?: Exposes Services
+  type: NodePort  # Exposes Services
   selector:
     app: mariadb
   ports:
     - protocol: TCP
       port : 3306
-      targetPort: 3306 # will retrieve nodePort dynamically
+      targetPort: 3306  # will retrieve nodePort dynamically

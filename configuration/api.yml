@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: acme-api
+  template:
+    metadata:
+      labels:
+        app: acme-api
+    spec:
+      containers:
+      - name: express-api
+        image: 'baldcap/acme-api:latest'
+        ports:
+          - containerPort: 3000
+        env:
+        - name: DB_HOST
+          value: mariadb-service
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-user-env-variables
+              key: DB_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-user-env-variables
+              key: DB_PASSWORD
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: db-user-env-variables
+              key: DB_NAME
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-service
+spec:
+  type: NodePort
+  selector:
+    app: acme-api
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000

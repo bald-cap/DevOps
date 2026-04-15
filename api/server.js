@@ -11,9 +11,9 @@ app.use(cors());
 
 const dbConfig = {
     host: process.env.DB_HOST || 'mariadb',      // Nom du service Docker
-    user: process.env.DB_USER || 'acme_user',
-    password: process.env.DB_PASSWORD || 'acme_password',
-    database: process.env.DB_NAME || 'acme_db',
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
     waitForConnections: true,
     connectionLimit: 10
 };

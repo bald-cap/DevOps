@@ -2,8 +2,8 @@ GRANT ALL PRIVILEGES ON *.* TO 'acme_user'@'%';
 FLUSH PRIVILEGES;
 
 
--- Création de la table Clients
-CREATE TABLE IF NOT EXISTS Clients (
+-- Création de la table clients
+CREATE TABLE IF NOT EXISTS clients (
     id int(11) NOT NULL,
     prenom varchar(200) NOT NULL,
     nom varchar(200) NOT NULL,
@@ -12,13 +12,13 @@ CREATE TABLE IF NOT EXISTS Clients (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Définition de la clé primaire
-ALTER TABLE Clients ADD PRIMARY KEY (id);
+ALTER TABLE clients ADD PRIMARY KEY (id);
 
 -- Auto-incrémentation de l'id
-ALTER TABLE Clients MODIFY id int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE clients MODIFY id int(11) NOT NULL AUTO_INCREMENT;
 
 -- Insertion des données initiales
-INSERT INTO Clients (id, prenom, nom, email, creation) VALUES 
+INSERT INTO clients (id, prenom, nom, email, creation) VALUES 
 (1, 'John','Doe', 'johndoe@gmail.com', '2012-06-01 02:12:30'),
 (2, 'Olivier','Costa', 'olivier.costa1548@yahoo.com', '2015-03-03 01:20:10'),
 (3, 'Teddy','Martell', 'teddy.m4975@gmail.com', '2014-09-20 03:10:25'),
