@@ -4,7 +4,7 @@
 
 tag=${1:-latest}
 
-docker build --tag baldcap/acme-api:"$tag" api/
+docker build --tag "$DOCKERHUB_USERNAME"/acme-api:"$tag" api/
 
 docker login --username "$DOCKERHUB_USERNAME" --password "$DOCKERHUB_PASSWORD"
 
