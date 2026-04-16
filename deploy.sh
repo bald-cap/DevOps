@@ -47,13 +47,14 @@ echo "Regstering MariaDB Init Script with ConfigMap"
 kubectl create configmap db-init-script --from-file=db/init.sql \
     --output=yaml --dry-run=client | kubectl apply --filename -
 
-# Volume
 echo "Adding MariaDB Persistence Volume and Claim"
+# Volume
 kubectl apply --filename configuration/db-persistence.yml &&
     kubectl get persistentvolumes db-volume > /dev/null 2>&1
 
 ExitOnError $? "Couldnt Create DB Persistent Volume" 7
 
+# Volume Claim
 kubectl apply --filename configuration/db-persistence-claim.yml &&
     kubectl get persistentvolumeclaims db-volume-claim > /dev/null 2>&1
 
