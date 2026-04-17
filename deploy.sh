@@ -22,14 +22,13 @@ function TestService() {
 
 function DeployService(){
     local -r DeployStateMessage="$1" ConfigFile="$2" service="$3"
-    local -r ServiceTestMessage="$4" ErrorMessage="$5" Deployment="$7"
+    local -r ServiceTestMessage="$4" ErrorMessage="$5"
     local -ir ExitVal="$6"
 
     echo "$DeployStateMessage"
     kubectl apply --filename configuration/"$ConfigFile".yml &&
-        kubectl rollout status deployment/"$Deployment"
-
-    kubectl wait --for=condition=ready --filename=configuration/"$ConfigFile".yml
+        kubectl wait --for=condition=ready \
+            --filename=configuration/"$ConfigFile".yml
 
     echo "$ServiceTestMessage"
     TestService "$service"
@@ -64,10 +63,10 @@ ExitOnError $? "Couldnt Create DB Persistent Volume Claim" 8
 
 # Services: MariaDB PHPMyAdmin Express API
 Params=(
-    "'Deploying && Exposing mariadb' mariadb mariadb-service 'Testing MariaDB Service' 'Issue Deploying MariaDB' 2 mariadb-deployment" # MariaDB
+    "'Deploying && Exposing mariadb' mariadb mariadb-service 'Testing MariaDB Service' 'Issue Deploying MariaDB' 2" # MariaDB
     "'Deploying && Exposing DB interface (PHPMyAdmin)' php-my-admin pma-service 'Testing PHPMyAdmin Service' \
-        'Issue Deploying Database Interface (PHPMyAdmin)' 3 phpmyadmin-deployment"
-    "'Deploying && Exposing API' api api-service 'Testing Express API Service' 'Issue Deploying API' 4 api-deployment"
+        'Issue Deploying Database Interface (PHPMyAdmin)' 3"
+    "'Deploying && Exposing API' api api-service 'Testing Express API Service' 'Issue Deploying API' 4"
 )
 
 for param in "${Params[@]}"; do
