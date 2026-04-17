@@ -16,8 +16,9 @@ function TestService() {
         kubectl get service "$service" \
             --output='jsonpath={.spec.ports[0].nodePort}' \
     )
-
-    nc -z $(minikube ip) "$port" -w 3
+    
+    kubectl wait --for=condition=ready
+    nc -z $(minikube ip) "$port" -w 10
 }
 
 function DeployService(){
