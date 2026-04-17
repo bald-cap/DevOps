@@ -26,8 +26,9 @@ function DeployService(){
     local -ir ExitVal="$6"
 
     echo "$DeployStateMessage"
-    kubectl apply --filename configuration/"$ConfigFile".yml &&
-    sleep  # Is not Reliable
+    kubectl apply --filename configuration/"$ConfigFile".yml && 
+	    sleep 15  # Is not Reliable
+
     TestService "$service"
     
     ExitOnError $? "$ErrorMessage" "$ExitVal"
