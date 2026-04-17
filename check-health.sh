@@ -6,7 +6,10 @@ function CheckService(){
 
     if [ $ErrorStatus -ne 0 ]; then
         echo "$ErrorMessage";
-        pods_string=$(kubectl get pods --output='jsonpath{.items[*].metadata.name}')
+        pods_string=$(kubectl get pods \
+            --output='jsonpath={.item[*].metadata.name}' \
+            --field-selector=status.phase!=Running \
+        )
         
         read -ra pods <<< "$pods_string"
         for pod in "${pods[@]}"; do
@@ -23,13 +26,15 @@ ports_string=$( \
 read -ra ports <<< "$ports_string" # Casting String to Array
 
 status=0
+KubeIp=$(minikube ip)
 for port in "${ports[@]}"; do
     echo "Checking service on port $port..."  
 
-    nc -z $(minikube ip) "$port" -w 3
+    nc -z "$KubeIp" "$port" -w 3
 
     if test $? -ne 0; then
         status=1
+        break
     fi
 done
 
