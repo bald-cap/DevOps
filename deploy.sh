@@ -17,7 +17,6 @@ function TestService() {
             --output='jsonpath={.spec.ports[0].nodePort}' \
     )
     
-    kubectl wait --for=condition=ready
     nc -z $(minikube ip) "$port" -w 10
 }
 
@@ -29,6 +28,8 @@ function DeployService(){
     echo "$DeployStateMessage"
     kubectl apply --filename configuration/"$ConfigFile".yml &&
         kubectl rollout status deployment/"$Deployment"
+
+    kubectl wait --for=condition=ready --filename=configuration/"$ConfigFile".yml
 
     echo "$ServiceTestMessage"
     TestService "$service"
