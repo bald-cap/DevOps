@@ -27,9 +27,7 @@ function DeployService(){
 
     echo "$DeployStateMessage"
     kubectl apply --filename configuration/"$ConfigFile".yml &&
-    sleep 20 # Is not Reliable
-
-    echo "$ServiceTestMessage"
+    sleep  # Is not Reliable
     TestService "$service"
     
     ExitOnError $? "$ErrorMessage" "$ExitVal"
@@ -62,12 +60,12 @@ ExitOnError $? "Couldnt Create DB Persistent Volume Claim" 8
 
 # Services: MariaDB PHPMyAdmin Express API
 Params=(
-    "'Deploying && Exposing mariadb' mariadb mariadb-service 'Testing MariaDB Service' 'Issue Deploying MariaDB' 2" # MariaDB
-    "'Deploying && Exposing mariadb' mariadb mariadb-service 'Testing MariaDB Service' 'Issue Deploying MariaDB' 2" # MariaDB
-    "'Deploying && Exposing mariadb' mariadb mariadb-service 'Testing MariaDB Service' 'Issue Deploying MariaDB' 2" # MariaDB
-        'Issue Deploying Database Interface (PHPMyAdmin)' 3"
-        'Issue Deploying Database Interface (PHPMyAdmin)' 3"
-    "'Deploying && Exposing API' api api-service 'Testing Express API Service' 'Issue Deploying API' 4"
+    "'Deploying && Exposing mariadb' mariadb mariadb-service 'Testing MariaDB Service' 'Issue Deploying MariaDB' 2 mariadb-deployment" # MariaDB
+    "'Deploying && Exposing DB interface (PHPMyAdmin)' php-my-admin pma-service 'Testing PHPMyAdmin Service' \
+        'Issue Deploying Database Interface (PHPMyAdmin)' 3 phpmyadmin-deployment"
+    "'Deploying && Exposing API' api api-service 'Testing Express API Service' 'Issue Deploying API' 4 api-deployment"
+)
+
 for param in "${Params[@]}"; do
     eval DeployService "$param"
 done
